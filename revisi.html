@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+
+<!-- Dicoding oleh Muhammad David Aryanto Pada 12 Mei 2025 !-->
+
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Status Server Minecraft AetherSMP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    :root {
+      --bg-dark: #121212;
+      --bg-medium: #1e1e1e;
+      --bg-light: #2a2a2a;
+      --bg-card: #353535;
+      --text-primary: #ffffff;
+      --text-secondary: #bbb;
+      --accent-green: #00ff00;
+      --accent-cyan: #00ffff;
+      --accent-red: #ff4444;
+      --accent-orange: #ff8800;
+      --shadow-color: rgba(0,255,0,0.2);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, var(--bg-dark), var(--bg-medium));
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    .navbar {
+      background-color: var(--bg-light);
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--accent-cyan);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .navbar-brand i {
+      font-size: 1.5em;
+    }
+
+    .navbar-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .navbar-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .navbar-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .main-content {
+      flex-grow: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .server-dashboard {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      max-width: 900px;
+      width: 100%;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 
+        0 10px 25px rgba(0,0,0,0.3),
+        0 0 15px var(--shadow-color);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.5s ease;
+      border: 1px solid rgba(0,255,0,0.1);
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+      box-shadow: 
+        0 15px 35px rgba(0,0,0,0.4),
+        0 0 25px var(--shadow-color);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+      color: var(--accent-cyan);
+    }
+
+    .card-header i {
+      font-size: 1.5em;
+      animation: pulse 2s infinite alternate;
+    }
+
+    .card-content {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      opacity: 0;
+      animation: fadeInSlide 0.5s forwards;
+    }
+
+    .card-item i {
+      color: var(--accent-cyan);
+      min-width: 25px;
+      text-align: center;
+    }
+
+    .status-online { 
+      color: var(--accent-green); 
+      font-weight: bold;
+    }
+
+    .status-offline { 
+      color: var(--accent-red); 
+      font-weight: bold;
+    }
+
+    .connection-status {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      animation: pulse 1s infinite alternate;
+    }
+
+    .connection-online {
+      background-color: var(--accent-green);
+      box-shadow: 0 0 10px var(--accent-green);
+    }
+
+    .connection-offline {
+      background-color: var(--accent-red);
+      box-shadow: 0 0 10px var(--accent-red);
+    }
+
+    @keyframes fadeInSlide {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes pulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.1); }
+    }
+
+    .last-updated {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.8em;
+      margin-top: 15px;
+      font-style: italic;
+    }
+
+    @media (max-width: 768px) {
+      .server-dashboard {
+        grid-template-columns: 1fr;
+      }
+
+      .navbar-links {
+        display: none; /* Optional: You might want to add a mobile menu */
+      }
+    }
+
+    .error-message {
+      color: var(--accent-orange);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .footer {
+      background-color: var(--bg-light);
+      color: var(--text-secondary);
+      text-align: center;
+      padding: 15px 20px;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 10px;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--accent-cyan);
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="#" class="navbar-brand">
+      <i class="fas fa-cubes"></i>
+      AetherSMP
+    </a>
+    <div class="navbar-links">
+      <a href="#" class="active">Status Server</a>
+      <a href="https://discord.gg/Pp7URQQc7d">Discord</a>
+      <a href="https://chat.whatsapp.com/Bi0z01qwqUbIy0SFnF0Ba0">Whatsapp</a>     
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="server-dashboard">
+      <div class="card" id="server-status-card">
+        <div class="connection-status" id="connection-status"></div>
+        <div class="card-header">
+          <i class="fas fa-server"></i>
+          <h3>Status Server</h3>
+        </div>
+        <div class="card-content" id="status-content">
+          Memeriksa server...
+        </div>
+        <div class="last-updated" id="last-updated"></div>
+      </div>
+
+      <div class="card" id="server-info-card">
+        <div class="card-header">
+          <i class="fas fa-info-circle"></i>
+          <h3>Informasi Detail</h3>
+        </div>
+        <div class="card-content" id="info-content">
+          Menunggu data server...
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div>
+      © play.aethersmp.my.id . All rights reserved.
+    </div>
+    <div class="footer-links">
+      <a href="#"></a>
+    </div>
+  </footer>
+  <!-- Ini weem | David Sigma Ohio Mewing Gyat Skibidi Blub Blub !-->
+  <script>
+    const ip = "play.aethersmp.my.id";
+    const port = 28249;
+    const connectionStatus = document.getElementById('connection-status');
+    const statusContent = document.getElementById('status-content');
+    const infoContent = document.getElementById('info-content');
+    const lastUpdated = document.getElementById('last-updated');
+
+    function interpretPing(ping) {
+      if (ping <= 50) return { text: `${ping} ms | Lancar`, color: 'lime' };
+      if (ping <= 150) return { text: `${ping} ms | Sedang`, color: 'orange' };
+      return { text: `${ping} ms | Lambat`, color: 'red' };
+    }
+
+    async function fetchWithTimeout(resource, options = {}) {
+      const { timeout = 5000 } = options;
+      
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeout);
+      
+      try {
+        const response = await fetch(resource, {
+          ...options,
+          signal: controller.signal  
+        });
+        clearTimeout(id);
+        return response;
+      } catch (error) {
+        clearTimeout(id);
+        throw error;
+      }
+    }
+
+    async function checkServer() {
+      try {
+        // First, check server status
+        const serverRes = await fetchWithTimeout(`https://api.mcsrvstat.us/2/${ip}:${port}`, {
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        });
+        
+        if (!serverRes.ok) {
+          throw new Error('Server status API error');
+        }
+        
+        const data = await serverRes.json();
+
+        if (!data.online) {
+          // Server is offline
+          statusContent.innerHTML = `
+            <div class="card-item status-offline">
+              <i class="fas fa-times-circle"></i>
+              <span>Server Offline</span>
+            </div>
+            <div class="card-item error-message">
+              <i class="fas fa-exclamation-triangle"></i>
+              <span>Server tidak dapat dijangkau</span>
+            </div>
+          `;
+          infoContent.innerHTML = `
+            <div class="card-item">
+              <i class="fas fa-globe"></i>
+              <span>IP: ${ip}</span>
+            </div>
+            <div class="card-item">
+              <i class="fas fa-plug"></i>
+              <span>Port: ${port}</span>
+            </div>
+          `;
+          connectionStatus.classList.remove('connection-online');
+          connectionStatus.classList.add('connection-offline');
+          return;
+        }
+
+        // Try to get location data
+        let country = "Tidak diketahui";
+        let countryCode = "??";
+        try {
+          const locRes = await fetchWithTimeout(`https://ipapi.co/${data.ip}/json`);
+          if (locRes.ok) {
+            const locData = await locRes.json();
+            country = locData.country_name || "Tidak diketahui";
+            countryCode = locData.country_code || "??";
+          }
+        } catch (locError) {
+          console.warn("Location lookup failed:", locError);
+        }
+
+        // Ping interpretation
+        const pingInfo = data.debug.ping 
+          ? interpretPing(data.debug.ping) 
+          : { text: "Tidak tersedia", color: 'gray' };
+
+        // Status Card
+        statusContent.innerHTML = `
+          <div class="card-item status-online" style="color: ${pingInfo.color};">
+            <i class="fas fa-check-circle"></i>
+            <span>Server Online</span>
+          </div>
+          <div class="card-item">
+            <i class="fas fa-user-friends"></i>
+            <span>Pemain: ${data.players.online} / ${data.players.max}</span>
+          </div>
+          <div class="card-item" style="color: ${pingInfo.color};">
+            <i class="fas fa-bolt"></i>
+            <span>Ping: ${pingInfo.text}</span>
+          </div>
+        `;
+
+        // Info Card
+        infoContent.innerHTML = `
+          <div class="card-item">
+            <i class="fas fa-globe"></i>
+            <span>IP: ${data.ip} play.aethersmp.my.id</span>
+          </div>
+          <div class="card-item">
+            <i class="fas fa-plug"></i>
+            <span>Port: ${port}</span>
+          </div>
+          <div class="card-item">
+            <i class="fas fa-location-dot"></i>
+            <span>Lokasi: ${country} (${countryCode})</span>
+          </div>
+          <div class="card-item">
+            <i class="fas fa-map"></i>
+            <span>Versi: ${data.version || 'Tidak diketahui'}</span>
+          </div>
+        `;
+
+        // Update timestamp
+        const now = new Date().toLocaleTimeString();
+        lastUpdated.innerHTML = `Terakhir diperbarui: ${now}`;
+
+        // Update connection status
+        connectionStatus.classList.remove('connection-offline');
+        connectionStatus.classList.add('connection-online');
+
+      } catch (err) {
+        // Handle any errors during server check
+        console.error("Server check error:", err);
+        
+        statusContent.innerHTML = `
+          <div class="card-item status-offline">
+            <i class="fas fa-times-circle"></i>
+            <span>Status: Tidak Diketahui</span>
+          </div>
+          <div class="card-item error-message">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Gagal menghubungi server atau API</span>
+          </div>
+        `;
+        
+        infoContent.innerHTML = `
+          <div class="card-item">
+            <i class="fas fa-globe"></i>
+            <span>IP: ${ip}</span>
+          </div>
+          <div class="card-item">
+            <i class="fas fa-plug"></i>
+            <span>Port: ${port}</span>
+          </div>
+        `;
+        
+        connectionStatus.classList.remove('connection-online');
+        connectionStatus.classList.add('connection-offline');
+          }
+    }
+
+    // Run on page load and refresh every 30 seconds
+    checkServer();
+    setInterval(checkServer, 10000);
+  </script>
+</body>
+</html>
+  
+  <!-- Ketahuan nyolong kode ini akan dihajar ditempat | dicoding oleh muhammad david aryanto dengan bantuan ai (xyzacatt by dapp) !-->
