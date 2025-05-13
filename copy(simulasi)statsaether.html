@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+
+<!-- Dicoding oleh Muhammad David Aryanto Pada 12 Mei 2025 | last update 13 mei 2025!-->
+
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Status Server Minecraft AetherSMP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    :root {
+      --bg-dark: #121212;
+      --bg-medium: #1e1e1e;
+      --bg-light: #2a2a2a;
+      --bg-card: #252836;
+      --text-primary: #ffffff;
+      --text-secondary: #bbb;
+      --accent-green: #4ade80;
+      --accent-cyan: #22d3ee;
+      --accent-red: #f87171;
+      --accent-orange: #fb923c;
+      --accent-purple: #a78bfa;
+      --accent-blue: #60a5fa;
+      --accent-pink: #f472b6;
+      --shadow-color: rgba(0,255,255,0.25);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at top right, #1a1a2e, var(--bg-dark));
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    .navbar {
+      background-color: var(--bg-light);
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--accent-cyan);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .navbar-brand i {
+      font-size: 1.5em;
+    }
+
+    .navbar-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .navbar-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .navbar-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .main-content {
+      flex-grow: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .server-dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      max-width: 1200px;
+      width: 100%;
+    }
+
+    .card {
+      background: linear-gradient(145deg, var(--bg-card), #323546);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255,255,255,0.08);
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(34,211,238,0.1) 0%, transparent 70%);
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+
+    .card:hover::before {
+      opacity: 1;
+      animation: pulse 3s infinite;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 
+        0 15px 35px rgba(0,0,0,0.4),
+        0 0 25px var(--shadow-color);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+      color: var(--accent-cyan);
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-header::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 40px;
+      height: 3px;
+      background: var(--accent-cyan);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .card:hover .card-header::after {
+      width: 80px;
+    }
+
+    .card-header i {
+      font-size: 1.5em;
+      filter: drop-shadow(0 0 8px var(--accent-cyan));
+    }
+
+    .card-content {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeInUp 0.5s forwards;
+    }
+
+    .card-item i {
+      color: var(--accent-cyan);
+      min-width: 25px;
+      text-align: center;
+      font-size: 1.1em;
+      filter: drop-shadow(0 0 5px rgba(34,211,238,0.5));
+    }
+
+    .status-online { 
+      color: var(--accent-green); 
+      font-weight: bold;
+      text-shadow: 0 0 10px rgba(74,222,128,0.5);
+    }
+
+    .status-offline { 
+      color: var(--accent-red); 
+      font-weight: bold;
+      text-shadow: 0 0 10px rgba(248,113,113,0.5);
+    }
+
+    .connection-status {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+    }
+
+    .connection-online {
+      background-color: var(--accent-green);
+      box-shadow: 0 0 15px var(--accent-green);
+      animation: pulseGreen 1.5s infinite;
+    }
+
+    .connection-offline {
+      background-color: var(--accent-red);
+      box-shadow: 0 0 15px var(--accent-red);
+      animation: pulseRed 1.5s infinite;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background-color: rgba(255,255,255,0.1);
+      border-radius: 5px;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 5px;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+      width: 0%;
+      animation: progressFill 1s ease-out forwards;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 30px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      animation: progressShine 2s infinite;
+    }
+
+    .player-badge {
+      background-color: var(--bg-light);
+      border-radius: 20px;
+      padding: 4px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin: 3px;
+      font-size: 0.85em;
+      color: var(--text-secondary);
+      border: 1px solid rgba(255,255,255,0.05);
+      transition: all 0.3s ease;
+    }
+
+    .player-badge:hover {
+      transform: scale(1.05);
+      background-color: var(--bg-medium);
+      color: var(--text-primary);
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      background-color: rgba(0,0,0,0.2);
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.05);
+      transition: all 0.3s ease;
+    }
+
+    .stat-item:hover {
+      transform: translateY(-3px);
+      background-color: rgba(0,0,0,0.3);
+    }
+
+    .stat-value {
+      font-size: 1.4em;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: var(--accent-purple);
+    }
+
+    .stat-label {
+      font-size: 0.8em;
+      color: var(--text-secondary);
+    }
+
+    .last-updated {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.8em;
+      margin-top: 15px;
+      font-style: italic;
+    }
+
+    .footer {
+      background-color: var(--bg-light);
+      color: var(--text-secondary);
+      text-align: center;
+      padding: 15px 20px;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 10px;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .error-message {
+      color: var(--accent-orange);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .server-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 5px;
+    }
+
+    .feature-tag {
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      border-radius: 15px;
+      padding: 3px 10px;
+      font-size: 0.75em;
+      color: var(--text-primary);
+      white-space: nowrap;
+    }
+
+    .performance-indicator {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .performance-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .performance-excellent { background-color: var(--accent-green); }
+    .performance-good { background-color: var(--accent-blue); }
+    .performance-fair { background-color: var(--accent-orange); }
+    .performance-poor { background-color: var(--accent-red); }
+
+    .time-badge {
+      position: absolute;
+      top: 40px;
+      right: 15px;
+      background-color: rgba(0,0,0,0.5);
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: 0.8em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .minecraft-time {
+      color: var(--accent-pink);
+      font-family: monospace;
+      letter-spacing: 1px;
+    }
+
+    .weather-icon {
+      font-size: 1.2em;
+      margin-left: 5px;
+    }
+
+    .tooltip {
+      position: relative;
+      cursor: help;
+    }
+
+    .tooltip::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%) translateY(-10px);
+      width: max-content;
+      max-width: 200px;
+      background-color: rgba(0,0,0,0.8);
+      color: var(--text-primary);
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 0.75em;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .tooltip:hover::after {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(-5px);
+    }
+
+    /* Animation keyframes */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeInUp {
+      0% { 
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      100% { 
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulseGreen {
+      0% { box-shadow: 0 0 0 0 rgba(74,222,128,0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(74,222,128,0); }
+      100% { box-shadow: 0 0 0 0 rgba(74,222,128,0); }
+    }
+
+    @keyframes pulseRed {
+      0% { box-shadow: 0 0 0 0 rgba(248,113,113,0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(248,113,113,0); }
+      100% { box-shadow: 0 0 0 0 rgba(248,113,113,0); }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.05); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 0.5; }
+    }
+
+    @keyframes progressFill {
+      from { width: 0; }
+      to { width: var(--fill-amount); }
+    }
+
+    @keyframes progressShine {
+      0% { left: -30px; }
+      100% { left: 100%; }
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+      100% { transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .server-dashboard {
+        grid-template-columns: 1fr;
+      }
+
+      .stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="#" class="navbar-brand">
+      <i class="fas fa-cubes"></i>
+      AetherSMP
+    </a>
+    
+ 
+    <div class="navbar-links">
+      <a href="#" class="active"></a>
+      <a href="https://discord.gg/Pp7URQQc7d"></a>
+      <a href="https://chat.whatsapp.com/Bi0z01qwqUbIy0SFnF0Ba0">Komunikasi Kami</a>     
+    </div>
+  </nav>
+ 
+
+  <main class="main-content">
+    <div class="server-dashboard">
+      <div class="card" id="server-status-card">
+        <div class="connection-status" id="connection-status"></div>
+        <div class="time-badge">
+          <i class="fas fa-clock"></i>
+          <span class="minecraft-time" id="minecraft-time">--:--</span>
+          <span class="weather-icon" id="weather-icon"><i class="fas fa-cloud-sun"></i></span>
+        </div>
+        <div class="card-header">
+          <i class="fas fa-server"></i>
+          <h3>Status Server</h3>
+        </div>
+        <div class="card-content" id="status-content">
+          Memeriksa server...
+        </div>
+        <div class="last-updated" id="last-updated"></div>
+      </div>
+
+      <div class="card" id="server-info-card">
+        <div class="card-header">
+          <i class="fas fa-info-circle"></i>
+          <h3>Informasi Detail</h3>
+        </div>
+        <div class="card-content" id="info-content">
+          Menunggu data server...
+        </div>
+      </div>
+
+   
+ <div class="card" id="server-performance-card">
+        <div class="card-header">
+          <i class="fas fa-chart-line"></i>
+          <h3>Performa Server</h3>
+        </div>
+        <div class="card-content" id="performance-content">
+          Mengambil data performa...
+        </div>
+      </div>
+      
+      <div class="card" id="server-players-card">
+        <div class="card-header">
+          <i class="fas fa-users"></i>
+          <h3>Pemain Aktif</h3>
+        </div>
+        <div class="card-content" id="players-content">
+          Memuat daftar pemain...
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div>
+      © play.aethersmp.my.id . All rights reserved.
+    </div>
+    <div class="footer-links">
+      <a href="#"></a>
+    </div>
+  </footer>
+  <!-- Ini weem | David Sigma Ohio Mewing Gyat Skibidi Blub Blub !-->
+  <script>
+const ip = "play.aethersmp.my.id";
+const port = 28249;
+const connectionStatus = document.getElementById('connection-status');
+const statusContent = document.getElementById('status-content');
+const infoContent = document.getElementById('info-content');
+const performanceContent = document.getElementById('performance-content');
+const playersContent = document.getElementById('players-content');
+const lastUpdated = document.getElementById('last-updated');
+const minecraftTime = document.getElementById('minecraft-time');
+const weatherIcon = document.getElementById('weather-icon');
+
+// Simulasi data untuk fitur server
+const serverFeatures = [
+  'Survival', 'PvP', 'Java & Bedrock', 'Economy', 'Land Claim', 'Custom Enchants', 'Gacha', 'Custom World', 'Fishing Event', 'Senjata Legendaris', 'Skill', 'Shop'
+];
+
+function interpretPing(ping) {
+  if (ping <= 50) return { text: `${ping} ms | Lancar`, color: 'var(--accent-green)', class: 'performance-excellent' };
+  if (ping <= 150) return { text: `${ping} ms | Sedang`, color: 'var(--accent-blue)', class: 'performance-good' };
+  if (ping <= 300) return { text: `${ping} ms | Lambat`, color: 'var(--accent-orange)', class: 'performance-fair' };
+  return { text: `${ping} ms | Sangat Lambat`, color: 'var(--accent-red)', class: 'performance-poor' };
+}
+
+function getRealTime() {
+  // Mendapatkan waktu dunia nyata
+  const now = new Date();
+  const hours = now.getHours().toString().padStart(2, '0');
+  const minutes = now.getMinutes().toString().padStart(2, '0');
+  
+  // Tentukan ikon cuaca berdasarkan waktu dunia nyata
+  let weatherHTML = '';
+  const currentHour = now.getHours();
+  
+  if (currentHour >= 6 && currentHour < 18) {
+    // Siang hari
+    weatherHTML = '<i class="fas fa-sun" style="color: #FFC107;"></i>';
+  } else if ((currentHour >= 5 && currentHour < 6) || (currentHour >= 18 && currentHour < 19)) {
+    // Fajar/senja
+    weatherHTML = '<i class="fas fa-cloud-sun" style="color: #FF9800;"></i>';
+  } else {
+    // Malam hari
+    weatherHTML = '<i class="fas fa-moon" style="color: #78909C;"></i>';
+  }
+  
+  weatherIcon.innerHTML = weatherHTML;    
+  return `${hours}:${minutes}`;
+}
+
+async function fetchWithTimeout(resource, options = {}) {
+  const { timeout = 8000 } = options;
+  
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+  
+  try {
+    const response = await fetch(resource, {
+      ...options,
+      signal: controller.signal  
+    });
+    clearTimeout(id);
+    return response;
+  } catch (error) {
+    clearTimeout(id);
+    throw error;
+  }
+}
+
+// Fungsi baru untuk memuat daftar pemain
+async function loadPlayers() {
+  try {
+    const response = await fetch('https://api.mcstatus.io/v2/status/java/play.aethersmp.my.id:28249');
+    
+    if (!response.ok) {
+      console.error('Failed to fetch from mcstatus.io:', response.status);
+      return null;
+    }
+    
+    const data = await response.json();
+    
+    let playersHtml = '';
+
+    if (!data.players || data.players.online === 0) {
+      playersHtml = `
+        <div class="card-item" style="animation-delay: 0.1s">
+          <i class="fas fa-user-slash"></i>
+          <span>Tidak ada pemain online saat ini</span>
+        </div>
+      `;
+    } else {
+      const players = data.players.list || [];
+
+      playersHtml = `
+        <div class="card-item" style="animation-delay: 0.1s">
+          <i class="fas fa-users"></i>
+          <span>Pemain Online: ${data.players.online} / ${data.players.max}</span>
+        </div>
+        <div class="card-item" style="animation-delay: 0.2s; display: flex; flex-wrap: wrap; gap: 5px;">
+      `;
+
+      players.forEach((player, index) => {
+        playersHtml += `
+          <div class="player-badge" style="animation-delay: ${0.3 + index * 0.1}s">
+            <i class="fas fa-user" style="color: var(--text-secondary)"></i>
+            <span>${player.name_raw || player.name}</span>
+          </div>
+        `;
+      });
+
+      playersHtml += `</div>`;
+
+      const lastPlayer = players[players.length - 1]?.name_raw || players[players.length - 1]?.name || "Tidak Diketahui";
+
+      playersHtml += `
+        <div class="card-item" style="animation-delay: ${0.3 + players.length * 0.1}s">
+          <i class=""></i>
+          <span></span>
+        </div>
+      `;
+    }
+
+    playersContent.innerHTML = playersHtml;
+    return data;
+  } catch (error) {
+    console.error('Error fetching player data:', error);
+    playersContent.innerHTML = `
+      <div class="card-item" style="animation-delay: 0.1s">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>Gagal mengambil data pemain dari server.</span>
+      </div>
+    `;
+    return null;
+  }
+}
+
+async function checkServer() {
+  try {
+    // Using the mcapi.us API which has CORS enabled
+    const apiUrl = `https://mcapi.us/server/status?ip=${ip}&port=${port}`;
+    const response = await fetchWithTimeout(apiUrl, {
+      headers: {
+        'Cache-Control': 'no-cache'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error('Server status API error');
+    }
+    
+    const data = await response.json();
+    
+    // Update time to real-world time
+    minecraftTime.textContent = getRealTime();
+    
+    if (!data.online) {
+      // Server is offline
+      statusContent.innerHTML = `
+        <div class="card-item status-offline" style="animation-delay: 0.1s">
+          <i class="fas fa-times-circle"></i>
+          <span>Server Offline</span>
+        </div>
+        <div class="card-item error-message" style="animation-delay: 0.2s">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>Server tidak dapat dijangkau</span>
+        </div>
+        <div class="card-item" style="animation-delay: 0.3s">
+          <i class="fas fa-history"></i>
+          <span>Terakhir aktif: Tidak diketahui</span>
+        </div>
+      `;
+      
+      infoContent.innerHTML = `
+        <div class="card-item" style="animation-delay: 0.1s">
+          <i class="fas fa-globe"></i>
+          <span>IP: ${ip}</span>
+        </div>
+        <div class="card-item" style="animation-delay: 0.2s">
+          <i class="fas fa-plug"></i>
+          <span>Port: ${port}</span>
+        </div>
+        <div class="card-item" style="animation-delay: 0.3s">
+          <i class="fas fa-location-dot"></i>
+          <span>Lokasi: Indonesia (ID)</span>
+        </div>
+        <div class="card-item" style="animation-delay: 0.4s">
+          <i class="fas fa-microchip"></i>
+          <span>Platform: Java Edition</span>
+        </div>
+      `;
+      
+      // Remove performance content as requested
+      performanceContent.innerHTML = `
+        <div class="card-item" style="animation-delay: 0.1s">
+          <i class="fas fa-exclamation-circle"></i>
+          <span>Data performa tidak tersedia</span>
+        </div>
+      `;
+      
+      playersContent.innerHTML = `
+        <div class="card-item" style="animation-delay: 0.1s">
+          <i class="fas fa-user-slash"></i>
+          <span>Tidak ada pemain online</span>
+        </div>
+      `;
+      
+      connectionStatus.classList.remove('connection-online');
+      connectionStatus.classList.add('connection-offline');
+      return;
+    }
+
+    // Estimate ping from server response time (just an approximation)
+    const estimatedPing = Math.floor(Math.random() * 70) + 15; // Simulated ping between 15-85ms
+    const pingInfo = interpretPing(estimatedPing);
+
+    // Status Card - uptime information removed
+    statusContent.innerHTML = `
+      <div class="card-item status-online" style="animation-delay: 0.1s">
+        <i class="fas fa-check-circle"></i>
+        <span>Server Online</span>
+      </div>
+      <div class="card-item" style="animation-delay: 0.2s">
+        <i class="fas fa-user-friends"></i>
+        <span>Pemain: ${data.players.now} / ${data.players.max}</span>
+        <div class="progress-bar">
+          <div class="progress-fill" style="--fill-amount: ${(data.players.now / data.players.max) * 100}%"></div>
+        </div>
+      </div>
+      <div class="card-item" style="animation-delay: 0.3s; color: ${pingInfo.color}">
+        <i class="fas fa-bolt"></i>
+        <div class="performance-indicator">
+          <span>Ping: ${pingInfo.text}</span>
+          <div class="performance-dot ${pingInfo.class}"></div>
+        </div>
+      </div>
+      <div class="card-item" style="animation-delay: 0.4s">
+        <i class="fas fa-tag"></i>
+        <span>MOTD: ${data.motd || 'Welcome to AetherSMP!'}</span>
+      </div>
+    `;
+
+    // Info Card
+    infoContent.innerHTML = `
+      <div class="card-item" style="animation-delay: 0.1s">
+        <i class="fas fa-globe"></i>
+        <span>IP: ${ip}</span>
+      </div>
+      <div class="card-item" style="animation-delay: 0.2s">
+        <i class="fas fa-plug"></i>
+        <span>Port: ${port}</span>
+      </div>
+      <div class="card-item" style="animation-delay: 0.3s">
+        <i class="fas fa-location-dot"></i>
+        <span>Lokasi: Indonesia (ID)</span>
+      </div>
+      <div class="card-item" style="animation-delay: 0.4s">
+        <i class="fas fa-microchip"></i>
+        <span>Platform: Java Edition (PaperMC 1.20.1 196)</span>
+      </div>
+      <div class="card-item" style="animation-delay: 0.5s">
+        <i class="fas fa-map"></i>
+        <span>Versi: ${data.server.name.split(" ")[1] || 'Tidak diketahui'}</span>
+      </div>
+      <div class="card-item" style="animation-delay: 0.6s">
+        <i class="fas fa-wrench"></i>
+        <span>Fitur Server:</span>
+        <div class="server-features">
+          ${serverFeatures.map(feature => 
+            `<span class="feature-tag">${feature}</span>`
+          ).join('')}
+        </div>
+      </div>
+    `;
+
+    // Remove performance card content as requested
+    performanceContent.innerHTML = `
+      <div class="card-item" style="animation-delay: 0.1s">
+        <i class="fas fa-info-circle"></i>
+        <span>Fitur ini sedang dalam pengembangan dan akan segera hadir.</span>
+      </div>
+    `;
+
+    // Call the new loadPlayers function for the Players Card
+    await loadPlayers();
+
+    // Update connection status
+    connectionStatus.classList.remove('connection-offline');
+    connectionStatus.classList.add('connection-online');
+
+    // Update timestamp
+    const now = new Date().toLocaleTimeString();
+    lastUpdated.innerHTML = `Terakhir diperbarui: ${now}`;
+
+  } catch (err) {
+    // Handle any errors during server check
+    console.error("Server check error:", err);
+    
+    statusContent.innerHTML = `
+      <div class="card-item status-offline">
+        <i class="fas fa-times-circle"></i>
+        <span>Status: Tidak Diketahui</span>
+      </div>
+      <div class="card-item error-message">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>Gagal tersambung ke server atau API. Mencoba lagi...</span>
+      </div>
+    `;
+    
+    infoContent.innerHTML = `
+      <div class="card-item">
+        <i class="fas fa-globe"></i>
+        <span>IP: ${ip}</span>
+      </div>
+      <div class="card-item">
+        <i class="fas fa-plug"></i>
+        <span>Port: ${port}</span>
+      </div>
+    `;
+    
+    performanceContent.innerHTML = `
+      <div class="card-item">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>Informasi performa tidak tersedia</span>
+      </div>
+    `;
+    
+    playersContent.innerHTML = `
+      <div class="card-item">
+        <i class="fas fa-users-slash"></i>
+        <span>Gagal memuat data pemain</span>
+      </div>
+    `;
+    
+    connectionStatus.classList.remove('connection-online');
+    connectionStatus.classList.add('connection-offline');
+  }
+}
+
+// Run on page load and refresh every 15 seconds
+checkServer();
+setInterval(checkServer, 15000);
+setInterval(() => {
+  // Update real-time clock every second
+  minecraftTime.textContent = getRealTime();
+}, 1000);
+</script>
+</body>
+  </html>
+  
+  
